@@ -18,6 +18,11 @@ services:
       dockerfile: ./docker/Dockerfile
     networks:
       - event-reminder-network
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    environment:
+      - SIGNAL_REST_CLI_URL=${SIGNAL_REST_CLI_URL}
+      - ASPNETCORE_ENVIRONMENT=Production
   event-reminder-client:
     build:
       context: ../event-reminder-client
