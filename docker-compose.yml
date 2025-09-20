@@ -12,10 +12,45 @@ services:
       - NET_ADMIN
       - SYS_ADMIN
     restart: unless-stopped
+
+  event-reminder-server-db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=event_reminder
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - event-reminder-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+  event-reminder-server-migrate:
+    build:
+      context: ../event-reminder
+      dockerfile: ./docker/Dockerfile
+      target: migrate
+    depends_on:
+      - event-reminder-server-db
+    entrypoint: >
+      sh -c "cd /app &&
+             dotnet ef database update --project EventReminder.Migrations/EventReminder.Migrations.csproj --startup-project EventReminder/EventReminder.csproj"
+    volumes:
+      - ../event-reminder:/app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=event-reminder-server-db;Database=event_reminder;Username=postgres;Password=postgres
+    networks:
+      - event-reminder-network
   event-reminder-server:
     build:
       context: ../event-reminder
       dockerfile: ./docker/Dockerfile
+      target: runtime
     networks:
       - event-reminder-network
     extra_hosts:
@@ -23,7 +58,14 @@ services:
     environment:
       - SIGNAL_REST_CLI_URL=${SIGNAL_REST_CLI_URL}
       - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=event-reminder-server-db;Database=event_reminder;Username=postgres;Password=postgres
+    depends_on:
+      event-reminder-server-db:
+        condition: service_healthy
+      event-reminder-server-migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
+
   event-reminder-client:
     build:
       context: ../event-reminder-client
