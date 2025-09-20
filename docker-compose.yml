@@ -23,6 +23,7 @@ services:
     environment:
       - SIGNAL_REST_CLI_URL=${SIGNAL_REST_CLI_URL}
       - ASPNETCORE_ENVIRONMENT=Production
+    restart: unless-stopped
   event-reminder-client:
     build:
       context: ../event-reminder-client
@@ -33,20 +34,6 @@ services:
       - NODE_ENV=production
       - FE_DEVELOPMENT=${FE_DEVELOPMENT}
       - DOTNET_SERVER_URL=${DOTNET_SERVER_URL}
-#    depends_on:
-#      - db
-#    restart_policy:
-#      condition: on-failure
-#  db:
-#    image: postgres
-#    environment:
-#      - POSTGRES_PASSWORD=postgres
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_DB=postgres
-#    volumes:
-#      - db-data:/var/lib/postgresql/data
-#    restart_policy:
-#      condition: on-failure
   oauth2-proxy:
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
     ports:
