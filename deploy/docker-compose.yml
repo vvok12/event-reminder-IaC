@@ -1,18 +1,4 @@
 services:
-  zerotier-container:
-    image: zerotier-container
-    build:
-      context: ./zerotier
-      dockerfile: ./Dockerfile
-    networks:
-      - event-reminder-network
-    devices:
-      - "/dev/net/tun:/dev/net/tun"
-    cap_add:
-      - NET_ADMIN
-      - SYS_ADMIN
-    restart: unless-stopped
-
   event-reminder-server-db:
     image: postgres:latest
     container_name: event-reminder-server-db
@@ -33,10 +19,6 @@ services:
   event-reminder-server-migrate:
     image: event-reminder-server-migrate:latest
     container_name: event-reminder-server-migrate
-    build:
-      context: ../event-reminder
-      dockerfile: ./docker/Dockerfile
-      target: migrate
     depends_on:
       - event-reminder-server-db
     entrypoint: >
@@ -52,10 +34,6 @@ services:
   event-reminder-server:
     image: event-reminder-server:latest
     container_name: event-reminder-server
-    build:
-      context: ../event-reminder
-      dockerfile: ./docker/Dockerfile
-      target: runtime
     networks:
       - event-reminder-network
     extra_hosts:
@@ -74,9 +52,6 @@ services:
   event-reminder-client:
     image: event-reminder-client:latest
     container_name: event-reminder-client
-    build:
-      context: ../event-reminder-client
-      dockerfile: ./docker/Dockerfile
     networks:
       - event-reminder-network
     environment:

@@ -2,7 +2,7 @@
 
 To export all the containers:
 ```bash
-docker compose config | grep -oP "container_name:\s+\K(.*)" | while read cn; do docker export "${cn}" > "${cn}.tar"; done
+docker compose config | grep event | grep -oP "image:\s+\K(.*)" | while read cn; do docker save "${cn}" > "${cn}.tar"; done
 ```
 
 To load containers:
