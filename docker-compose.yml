@@ -15,6 +15,7 @@ services:
 
   event-reminder-server-db:
     image: postgres:latest
+    container_name: event-reminder-server-db
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -30,6 +31,7 @@ services:
       retries: 3
     restart: unless-stopped
   event-reminder-server-migrate:
+    container_name: event-reminder-server-migrate
     build:
       context: ../event-reminder
       dockerfile: ./docker/Dockerfile
@@ -47,6 +49,7 @@ services:
     networks:
       - event-reminder-network
   event-reminder-server:
+    container_name: event-reminder-server
     build:
       context: ../event-reminder
       dockerfile: ./docker/Dockerfile
@@ -67,6 +70,7 @@ services:
     restart: unless-stopped
 
   event-reminder-client:
+    container_name: event-reminder-client
     build:
       context: ../event-reminder-client
       dockerfile: ./docker/Dockerfile
@@ -77,6 +81,7 @@ services:
       - FE_DEVELOPMENT=${FE_DEVELOPMENT}
       - DOTNET_SERVER_URL=${DOTNET_SERVER_URL}
   oauth2-proxy:
+    container_name: oauth2-proxy
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
     ports:
       - "4180:4180"
