@@ -40,10 +40,8 @@ services:
     depends_on:
       - event-reminder-server-db
     entrypoint: >
-      sh -c "cd /app &&
+      sh -c "cd /src &&
              dotnet ef database update --project EventReminder.Migrations/EventReminder.Migrations.csproj --startup-project EventReminder/EventReminder.csproj"
-    volumes:
-      - ../event-reminder:/app
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Host=event-reminder-server-db;Database=event_reminder;Username=postgres;Password=postgres
