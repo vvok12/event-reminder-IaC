@@ -6,6 +6,8 @@ services:
       - $HOME/.local/share/signal-api:/home/.local/share/signal-cli
     environment:
       - MODE=native
+    networks:
+      - event-reminder-network
   event-reminder-server-db:
     image: postgres:latest
     environment:
