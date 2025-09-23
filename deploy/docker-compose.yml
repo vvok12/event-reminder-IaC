@@ -1,7 +1,13 @@
 services:
+  signal-client:
+    image: bbernhard/signal-cli-rest-api
+    restart: unless-stopped
+    volumes:
+      - $HOME/.local/share/signal-api:/home/.local/share/signal-cli
+    environment:
+      - MODE=native
   event-reminder-server-db:
     image: postgres:latest
-    container_name: event-reminder-server-db
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -18,14 +24,11 @@ services:
     restart: unless-stopped
   event-reminder-server-migrate:
     image: event-reminder-server-migrate:latest
-    container_name: event-reminder-server-migrate
     depends_on:
       - event-reminder-server-db
     entrypoint: >
-      sh -c "cd /app &&
+      sh -c "cd /src &&
              dotnet ef database update --project EventReminder.Migrations/EventReminder.Migrations.csproj --startup-project EventReminder/EventReminder.csproj"
-    volumes:
-      - ../event-reminder:/app
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Host=event-reminder-server-db;Database=event_reminder;Username=postgres;Password=postgres
@@ -33,7 +36,6 @@ services:
       - event-reminder-network
   event-reminder-server:
     image: event-reminder-server:latest
-    container_name: event-reminder-server
     networks:
       - event-reminder-network
     extra_hosts:
@@ -51,7 +53,6 @@ services:
 
   event-reminder-client:
     image: event-reminder-client:latest
-    container_name: event-reminder-client
     networks:
       - event-reminder-network
     environment:
@@ -59,7 +60,6 @@ services:
       - FE_DEVELOPMENT=${FE_DEVELOPMENT}
       - DOTNET_SERVER_URL=${DOTNET_SERVER_URL}
   oauth2-proxy:
-    container_name: oauth2-proxy
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
     ports:
       - "4180:4180"
