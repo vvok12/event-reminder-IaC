@@ -1,18 +1,4 @@
 services:
-  zerotier-container:
-    image: zerotier-container
-    build:
-      context: ./zerotier
-      dockerfile: ./Dockerfile
-    networks:
-      - event-reminder-network
-    devices:
-      - "/dev/net/tun:/dev/net/tun"
-    cap_add:
-      - NET_ADMIN
-      - SYS_ADMIN
-    restart: unless-stopped
-
   event-reminder-server-db:
     image: postgres:latest
     container_name: event-reminder-server-db
@@ -79,6 +65,7 @@ services:
       - event-reminder-network
     environment:
       - NODE_ENV=production
+      - ORIGIN=${SVELTEKIT_ORIGIN}
       - FE_DEVELOPMENT=${FE_DEVELOPMENT}
       - DOTNET_SERVER_URL=${DOTNET_SERVER_URL}
   oauth2-proxy:
