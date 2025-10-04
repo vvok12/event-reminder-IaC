@@ -20,7 +20,7 @@ services:
     image: event-reminder-server-migrate:latest
     container_name: event-reminder-server-migrate
     build:
-      context: ../event-reminder
+      context: ../../event-reminder
       dockerfile: ./docker/Dockerfile
       target: migrate
     depends_on:
@@ -38,7 +38,7 @@ services:
     image: event-reminder-server:latest
     container_name: event-reminder-server
     build:
-      context: ../event-reminder
+      context: ../../event-reminder
       dockerfile: ./docker/Dockerfile
       target: runtime
     networks:
@@ -60,7 +60,7 @@ services:
     image: event-reminder-client:latest
     container_name: event-reminder-client
     build:
-      context: ../event-reminder-client
+      context: ../../event-reminder-client
       dockerfile: ./docker/Dockerfile
     networks:
       - event-reminder-network
