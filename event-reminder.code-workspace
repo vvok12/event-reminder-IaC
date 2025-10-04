@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../event-reminder"
+		},
+		{
+			"path": "../event-reminder-client"
+		},
+		{
+			"path": "../event-reminder-lab-content"
+		}
+	],
+	"settings": {}
+}
