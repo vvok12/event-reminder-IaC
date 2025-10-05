@@ -7,7 +7,7 @@ docker compose config | grep event | grep -oP "container_name:\s+\K(.*)" | while
 
 To load containers:
 ```bash
-for f in $(find . -type f -name '*.tar'); do docker load -i "${f}"; done
+for f in $(find . -type f -name '*.tar'); do sudo docker load -i "${f}"; done
 ```
 
 [from here](https://stackoverflow.com/a/77523363) 
